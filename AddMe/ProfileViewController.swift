@@ -16,5 +16,11 @@ class ProfileViewController: UIViewController {
         super.viewDidLoad()
         profilePhoto.image = GlobalVariables.sharedManager.addMeProfPic.image
         nameLabel.text = GlobalVariables.sharedManager.firstName + " " + GlobalVariables.sharedManager.lastName
+        
+        profilePhoto.layer.borderWidth = 1
+        profilePhoto.layer.masksToBounds = false
+        profilePhoto.layer.borderColor = UIColor.whiteColor().CGColor
+        profilePhoto.layer.cornerRadius = profilePhoto.frame.height/2
+        profilePhoto.clipsToBounds = true
     }
 }

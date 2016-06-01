@@ -13,6 +13,7 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
     @IBOutlet var btnFacebook: FBSDKLoginButton!
     @IBOutlet var userProfileImage: UIImageView!
     @IBOutlet var labelName: UILabel!
+    @IBOutlet var homeButton: UIButton!
     
     var loginSuccess: Bool = false
 
@@ -22,7 +23,7 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
 //        self.view.backgroundColor = UIColor(patternImage: UIImage(named: "bg.jpg")!)
 
         configureFacebook()
-        
+        homeButton.hidden = true;
         if(loginSuccess && GlobalVariables.sharedManager.addMeProfPic != nil)
         {
             userProfileImage.image = GlobalVariables.sharedManager.addMeProfPic.image
@@ -57,6 +58,10 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
         btnFacebook.readPermissions = ["public_profile", "email", "user_friends"];
         btnFacebook.delegate = self
     }
+    @IBAction func homeButtonClicked(sender: AnyObject) {
+        self.performSegueWithIdentifier("ShowHomeSegue", sender: self)
+
+    }
 
     func loginButton(loginButton: FBSDKLoginButton!, didCompleteWithResult result: FBSDKLoginManagerLoginResult!, error: NSError!)
     {
@@ -73,6 +78,7 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
             self.userProfileImage.image = UIImage(data: NSData(contentsOfURL: NSURL(string: strPictureURL)!)!)
             GlobalVariables.sharedManager.addMeProfPic = self.userProfileImage
             self.loginSuccess = true
+            self.homeButton.hidden = false
         }
         // make home button appear
         self.performSegueWithIdentifier("ShowHomeSegue", sender: self)

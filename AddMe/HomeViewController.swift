@@ -20,6 +20,12 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         profPic.image = GlobalVariables.sharedManager.addMeProfPic.image
         welcomeText.text = "Welcome " + GlobalVariables.sharedManager.firstName + " " + GlobalVariables.sharedManager.lastName + "!"
+        
+        profPic.layer.borderWidth = 1
+        profPic.layer.masksToBounds = false
+        profPic.layer.borderColor = UIColor.whiteColor().CGColor
+        profPic.layer.cornerRadius = profPic.frame.height/2
+        profPic.clipsToBounds = true
     }
     
 }
