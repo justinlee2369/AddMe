@@ -31,28 +31,24 @@ class HomeViewController: UIViewController {
         profPic.clipsToBounds = true
         /*welcomeText.text = "Welcome " + GlobalVariables.sharedManager.firstName + " " + GlobalVariables.sharedManager.lastName + "!"*/
         
-        if let currentUser = retrieveCurrentUserDetails(){
-            welcomeText.text = "Welcome " + currentUser.firstName! + " " + currentUser.lastName! + "!"
-            print("From HomeViewController: Retrieved current user name from Core Data")
-        }
+        retrieveCurrentUserDetails()
     }
     
-    private func retrieveCurrentUserDetails() -> User? {
-        var fetchedUser:User? = nil
-        
+    private func retrieveCurrentUserDetails() {
+
         managedObjectContext?.performBlock(
         {
             // Get the User from Core Data
             
             do {
                 let currentUser = try (self.managedObjectContext!.executeFetchRequest(NSFetchRequest(entityName: "User")) as! [User]).first
-                    fetchedUser = currentUser
+                print("fetched \(currentUser?.firstName)")
+                self.welcomeText.text = "Welcome " + currentUser!.firstName! + " " + currentUser!.lastName! + "!"
             } catch {
                 // We should probably handle the case where this save fails but for now
                 fatalError("Failed to fetch currentUser: \(error)")
             }
         })
-        return fetchedUser
     }
     
 }
