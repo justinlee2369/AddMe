@@ -23,6 +23,9 @@
 		36EAF8A81CF429540046C7D8 /* GlobalVariables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36EAF8A71CF429540046C7D8 /* GlobalVariables.swift */; };
 		36EAF8AA1CF4324E0046C7D8 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36EAF8A91CF4324D0046C7D8 /* ProfileViewController.swift */; };
 		36EB599B1CF807A300AF9290 /* ConnectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36EB599A1CF807A300AF9290 /* ConnectViewController.swift */; };
+		FD17F0DA1CFE3B93002048FD /* User+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD17F0D81CFE3B93002048FD /* User+CoreDataProperties.swift */; };
+		FD17F0DB1CFE3B93002048FD /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD17F0D91CFE3B93002048FD /* User.swift */; };
+		FDD2ED5A1CFE2F5300770A2F /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FDD2ED581CFE2F5300770A2F /* Model.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +48,9 @@
 		36EAF8A71CF429540046C7D8 /* GlobalVariables.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalVariables.swift; sourceTree = "<group>"; };
 		36EAF8A91CF4324D0046C7D8 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		36EB599A1CF807A300AF9290 /* ConnectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectViewController.swift; sourceTree = "<group>"; };
+		FD17F0D81CFE3B93002048FD /* User+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "User+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		FD17F0D91CFE3B93002048FD /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		FDD2ED591CFE2F5300770A2F /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,22 +91,33 @@
 		362A8BE61CDD6E150019AE72 /* AddMe */ = {
 			isa = PBXGroup;
 			children = (
-				362A8BE71CDD6E150019AE72 /* AppDelegate.swift */,
-				362A8BE91CDD6E150019AE72 /* ViewController.swift */,
 				367C57631CFE0E7000511BBD /* images */,
+				362A8BFF1CDD71B30019AE72 /* AddMe-Bridging-Header.h */,
 				362A8C001CDD71B30019AE72 /* Header.m */,
-				362A8BEB1CDD6E150019AE72 /* Main.storyboard */,
+				362A8BF31CDD6E160019AE72 /* Info.plist */,
+				36A08FBE1CF2CB74007516D2 /* AddMeServiceManager.swift */,
+				362A8BE71CDD6E150019AE72 /* AppDelegate.swift */,
 				36EB599A1CF807A300AF9290 /* ConnectViewController.swift */,
 				36EAF8A71CF429540046C7D8 /* GlobalVariables.swift */,
 				36EAF8A51CF3E3D80046C7D8 /* HomeViewController.swift */,
 				36EAF8A91CF4324D0046C7D8 /* ProfileViewController.swift */,
-				36A08FBE1CF2CB74007516D2 /* AddMeServiceManager.swift */,
+				362A8BE91CDD6E150019AE72 /* ViewController.swift */,
 				362A8BEE1CDD6E160019AE72 /* Assets.xcassets */,
+				FD17F0DC1CFE3C4D002048FD /* Core Data */,
 				362A8BF01CDD6E160019AE72 /* LaunchScreen.storyboard */,
-				362A8BF31CDD6E160019AE72 /* Info.plist */,
-				362A8BFF1CDD71B30019AE72 /* AddMe-Bridging-Header.h */,
+				362A8BEB1CDD6E150019AE72 /* Main.storyboard */,
 			);
 			path = AddMe;
+			sourceTree = "<group>";
+		};
+		FD17F0DC1CFE3C4D002048FD /* Core Data */ = {
+			isa = PBXGroup;
+			children = (
+				FDD2ED581CFE2F5300770A2F /* Model.xcdatamodeld */,
+				FD17F0D91CFE3B93002048FD /* User.swift */,
+				FD17F0D81CFE3B93002048FD /* User+CoreDataProperties.swift */,
+			);
+			name = "Core Data";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -181,9 +198,12 @@
 				362A8BEA1CDD6E150019AE72 /* ViewController.swift in Sources */,
 				362A8C011CDD71B30019AE72 /* Header.m in Sources */,
 				36EAF8AA1CF4324E0046C7D8 /* ProfileViewController.swift in Sources */,
+				FDD2ED5A1CFE2F5300770A2F /* Model.xcdatamodeld in Sources */,
 				362A8BE81CDD6E150019AE72 /* AppDelegate.swift in Sources */,
 				36A08FBF1CF2CB74007516D2 /* AddMeServiceManager.swift in Sources */,
+				FD17F0DA1CFE3B93002048FD /* User+CoreDataProperties.swift in Sources */,
 				36EB599B1CF807A300AF9290 /* ConnectViewController.swift in Sources */,
+				FD17F0DB1CFE3B93002048FD /* User.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,6 +320,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -308,6 +329,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.AddMe;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "AddMe/AddMe-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -320,6 +342,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -328,6 +351,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.AddMe;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "AddMe/AddMe-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -355,6 +379,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		FDD2ED581CFE2F5300770A2F /* Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				FDD2ED591CFE2F5300770A2F /* Model.xcdatamodel */,
+			);
+			currentVersion = FDD2ED591CFE2F5300770A2F /* Model.xcdatamodel */;
+			path = Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 362A8BDC1CDD6E140019AE72 /* Project object */;
 }

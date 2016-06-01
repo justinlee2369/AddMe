@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class ViewController: UIViewController, FBSDKLoginButtonDelegate {
 
@@ -15,6 +16,8 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
     @IBOutlet var labelName: UILabel!
     
     var loginSuccess: Bool = false
+    var managedObjectContext: NSManagedObjectContext? =
+        (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,6 +76,8 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
             self.userProfileImage.image = UIImage(data: NSData(contentsOfURL: NSURL(string: strPictureURL)!)!)
             GlobalVariables.sharedManager.addMeProfPic = self.userProfileImage
             self.loginSuccess = true
+            
+            self.saveUserFacebookDetailsToDatabase(strFirstName, lastName: strLastName)
         }
         // make home button appear
         self.performSegueWithIdentifier("ShowHomeSegue", sender: self)
@@ -86,6 +91,26 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
         
         userProfileImage.image = nil
         labelName.text = ""
+    }
+    
+    private func saveUserFacebookDetailsToDatabase(firstName: String, lastName: String)
+    {
+        managedObjectContext?.performBlock(
+        {
+            // create a new User object in database and set the fields gathered from Facebook
+            _ = User.createUserWithFBDetails(firstName, lastName: lastName, inManagedObjectContext: self.managedObjectContext!)
+            
+            do {
+                // Hopefully this save works
+                try self.managedObjectContext!.save()
+                
+                let userCount = self.managedObjectContext!.countForFetchRequest(NSFetchRequest(entityName: "User"), error: nil)
+                print("\(userCount) users in database")
+            } catch let error{
+                // We should probably handle the case where this save fails but for now
+                print("Core Data Save Error \(error)")
+            }
+        })
     }
 }
 

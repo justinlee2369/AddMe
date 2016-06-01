@@ -7,7 +7,11 @@
 //
 
 import Foundation
+import CoreData
 class HomeViewController: UIViewController {
+    var managedObjectContext: NSManagedObjectContext? =
+        (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext
+    
     @IBOutlet var welcomeText: UILabel!
     @IBOutlet var profPic: UIImageView!
     @IBAction func profileButtonTapped(sender: AnyObject) {
@@ -19,7 +23,30 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         profPic.image = GlobalVariables.sharedManager.addMeProfPic.image
-        welcomeText.text = "Welcome " + GlobalVariables.sharedManager.firstName + " " + GlobalVariables.sharedManager.lastName + "!"
+        /*welcomeText.text = "Welcome " + GlobalVariables.sharedManager.firstName + " " + GlobalVariables.sharedManager.lastName + "!"*/
+        
+        if let currentUser = retrieveCurrentUserDetails(){
+            welcomeText.text = "Welcome " + currentUser.firstName! + " " + currentUser.lastName! + "!"
+            print("From HomeViewController: Retrieved current user name from Core Data")
+        }
+    }
+    
+    private func retrieveCurrentUserDetails() -> User? {
+        var fetchedUser:User? = nil
+        
+        managedObjectContext?.performBlock(
+        {
+            // Get the User from Core Data
+            
+            do {
+                let currentUser = try (self.managedObjectContext!.executeFetchRequest(NSFetchRequest(entityName: "User")) as! [User]).first
+                    fetchedUser = currentUser
+            } catch {
+                // We should probably handle the case where this save fails but for now
+                fatalError("Failed to fetch currentUser: \(error)")
+            }
+        })
+        return fetchedUser
     }
     
 }
