@@ -22,7 +22,7 @@ class HomeViewController: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        profPic.image = GlobalVariables.sharedManager.addMeProfPic.image
+        //profPic.image = GlobalVariables.sharedManager.addMeProfPic.image
         
         profPic.layer.borderWidth = 1
         profPic.layer.masksToBounds = false
@@ -35,15 +35,15 @@ class HomeViewController: UIViewController {
     }
     
     private func retrieveCurrentUserDetails() {
-
         managedObjectContext?.performBlock(
         {
             // Get the User from Core Data
-            
             do {
                 let currentUser = try (self.managedObjectContext!.executeFetchRequest(NSFetchRequest(entityName: "User")) as! [User]).first
                 print("fetched \(currentUser?.firstName)")
                 self.welcomeText.text = "Welcome " + currentUser!.firstName! + " " + currentUser!.lastName! + "!"
+                self.profPic.image = currentUser?.getProfilePic()
+                print("set prof pic")
             } catch {
                 // We should probably handle the case where this save fails but for now
                 fatalError("Failed to fetch currentUser: \(error)")

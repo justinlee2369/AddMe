@@ -12,15 +12,22 @@ import CoreData
 
 class User: NSManagedObject {
 
-    class func createUserWithFBDetails(firstName: String, lastName: String, inManagedObjectContext context:NSManagedObjectContext ) -> User?
+    class func createUserWithFBDetails(firstName: String, lastName: String, profilePic: UIImage, inManagedObjectContext context:NSManagedObjectContext ) -> User?
     {
         if let newUser = NSEntityDescription.insertNewObjectForEntityForName("User", inManagedObjectContext: context) as? User{
             newUser.firstName = firstName
             newUser.lastName = lastName
+            newUser.profilePhoto = NSData(data: UIImageJPEGRepresentation(profilePic, 1.0)!)
+
             return newUser
         }
         
         return nil
+    }
+    
+    func getProfilePic() -> UIImage
+    {
+        return UIImage(data:self.profilePhoto!,scale:1.0)!
     }
 
 }

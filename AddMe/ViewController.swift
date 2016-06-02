@@ -16,6 +16,7 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
     @IBOutlet var labelName: UILabel!
     @IBOutlet var homeButton: UIButton!
     
+    let defaults = NSUserDefaults.standardUserDefaults()
     var loginSuccess: Bool = false
     var managedObjectContext: NSManagedObjectContext? =
         (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext
@@ -26,11 +27,17 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
 //        self.view.backgroundColor = UIColor(patternImage: UIImage(named: "bg.jpg")!)
 
         configureFacebook()
-        homeButton.hidden = true;
-        if(loginSuccess && GlobalVariables.sharedManager.addMeProfPic != nil)
+        homeButton.hidden = true
+        /*if(loginSuccess && GlobalVariables.sharedManager.addMeProfPic != nil)
         {
             userProfileImage.image = GlobalVariables.sharedManager.addMeProfPic.image
             labelName.text = GlobalVariables.sharedManager.firstName + " " + GlobalVariables.sharedManager.lastName
+        }*/
+        
+        if(defaults.boolForKey("UserLoginSuccess"))
+        {
+            retrieveCurrentUserDetails()
+            homeButton.hidden = false
         }
 
 
@@ -81,8 +88,13 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
             self.userProfileImage.image = UIImage(data: NSData(contentsOfURL: NSURL(string: strPictureURL)!)!)
             GlobalVariables.sharedManager.addMeProfPic = self.userProfileImage
             self.loginSuccess = true
+            
+            self.defaults.setBool(true, forKey: "UserLoginSuccess")
+            
             self.homeButton.hidden = false
-            self.saveUserFacebookDetailsToDatabase(strFirstName, lastName: strLastName)
+            
+            let pfPic = UIImage(data: NSData(contentsOfURL: NSURL(string: strPictureURL)!)!)
+            self.saveUserFacebookDetailsToDatabase(strFirstName, lastName: strLastName, profilePic: pfPic!)
         }
         // make home button appear
         self.performSegueWithIdentifier("ShowHomeSegue", sender: self)
@@ -94,16 +106,20 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
         let loginManager: FBSDKLoginManager = FBSDKLoginManager()
         loginManager.logOut()
         
+        // We want this behavior right? No home button if not logged in?
+        self.defaults.setBool(false, forKey: "UserLoginSuccess")
+        self.homeButton.hidden = true
+        
         userProfileImage.image = nil
-        labelName.text = ""
+        labelName.text = "Welcome to Add Me!"
     }
     
-    private func saveUserFacebookDetailsToDatabase(firstName: String, lastName: String)
+    private func saveUserFacebookDetailsToDatabase(firstName: String, lastName: String, profilePic: UIImage)
     {
         managedObjectContext?.performBlock(
         {
             // create a new User object in database and set the fields gathered from Facebook
-            _ = User.createUserWithFBDetails(firstName, lastName: lastName, inManagedObjectContext: self.managedObjectContext!)
+            _ = User.createUserWithFBDetails(firstName, lastName: lastName, profilePic: profilePic, inManagedObjectContext: self.managedObjectContext!)
             
             do {
                 // Hopefully this save works
@@ -115,6 +131,27 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
                 // We should probably handle the case where this save fails but for now
                 print("Core Data Save Error \(error)")
             }
+        })
+    }
+    
+    private func retrieveCurrentUserDetails() {
+        managedObjectContext?.performBlock(
+            {
+                // Get the User from Core Data
+                
+                do {
+                    let currentUser = try (self.managedObjectContext!.executeFetchRequest(NSFetchRequest(entityName: "User")) as! [User]).first
+                    print("fetched \(currentUser?.firstName) in first view controller")
+
+                    self.userProfileImage.image = currentUser?.getProfilePic()
+                    print("set prof pic")
+
+                    self.labelName.text = (currentUser?.firstName)! + " " + (currentUser?.lastName)!
+                    
+                } catch {
+                    // We should probably handle the case where this save fails but for now
+                    fatalError("Failed to fetch currentUser: \(error)")
+                }
         })
     }
 }
