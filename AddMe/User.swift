@@ -29,5 +29,10 @@ class User: NSManagedObject {
     {
         return UIImage(data:self.profilePhoto!,scale:1.0)!
     }
+    
+    func updateUserDetails(email: String)
+    {
+        self.email = email
+    }
 
 }
