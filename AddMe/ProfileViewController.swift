@@ -9,10 +9,13 @@
 import Foundation
 import CoreData
 
-class ProfileViewController: UIViewController {
+class ProfileViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet var profilePhoto: UIImageView!
     @IBOutlet var nameLabel: UILabel!
+    
+    @IBOutlet var emailField: UITextField!
+    @IBOutlet var phoneField: UITextField!
     
     var managedObjectContext: NSManagedObjectContext? =
         (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext
@@ -23,11 +26,32 @@ class ProfileViewController: UIViewController {
         nameLabel.text = GlobalVariables.sharedManager.firstName + " " + GlobalVariables.sharedManager.lastName*/
         retrieveCurrentUserDetails()
         
+        self.emailField.delegate = self
+        self.phoneField.delegate = self
+        
         profilePhoto.layer.borderWidth = 1
         profilePhoto.layer.masksToBounds = false
         profilePhoto.layer.borderColor = UIColor.whiteColor().CGColor
         profilePhoto.layer.cornerRadius = profilePhoto.frame.height/2
         profilePhoto.clipsToBounds = true
+    }
+    
+    @IBAction func saveButtonTapped(sender: AnyObject) {
+        if (emailField.text?.characters.count > 0)
+        {
+            saveUserDetails(emailField.text!)
+            print(emailField.text)
+            
+        }
+        // Alert
+        else
+        {
+        }
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return false
     }
     
     private func retrieveCurrentUserDetails() {
@@ -43,6 +67,19 @@ class ProfileViewController: UIViewController {
                     print("set prof pic")
                 } catch {
                     // We should probably handle the case where this save fails but for now
+                    fatalError("Failed to fetch currentUser: \(error)")
+                }
+        })
+    }
+    
+    private func saveUserDetails(email: String) {
+        managedObjectContext?.performBlock(
+            {
+                do {
+                   let currentUser = try (self.managedObjectContext!.executeFetchRequest(NSFetchRequest(entityName: "User")) as! [User]).first
+                    currentUser?.updateUserDetails(email)
+                    
+                } catch {
                     fatalError("Failed to fetch currentUser: \(error)")
                 }
         })

@@ -7,10 +7,18 @@
 //
 
 import Foundation
+import CoreData
 
 class ConnectViewController : UIViewController {
     @IBOutlet var connectionsLabel: UILabel!
     @IBOutlet var textField: UITextField!
+    @IBOutlet var emailSwitch: UISwitch!
+    @IBOutlet var email: UILabel!
+    var message : String = ""
+    
+    var managedObjectContext: NSManagedObjectContext? =
+        (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext
+
     let addMeService = AddMeServiceManager()
 
     override func viewDidLoad() {
@@ -19,11 +27,16 @@ class ConnectViewController : UIViewController {
         addMeService.delegate = self
 
     }
-  
-    @IBAction func submitButtonTapped(sender: AnyObject) {
-        print("***" + textField.text!)
-        addMeService.sendText(textField.text!)
+    @IBAction func sendButtonClicked(sender: AnyObject) {
+        retrieveCurrentUserDetails()
+        print("** \(message)")
+        addMeService.sendText(message)
     }
+  
+//    @IBAction func submitButtonTapped(sender: AnyObject) {
+//        print("***" + textField.text!)
+//        addMeService.sendText(textField.text!)
+//    }
     
     @IBAction func redButtonTapped(sender: AnyObject) {
         self.changeColor(UIColor.redColor())
@@ -38,8 +51,28 @@ class ConnectViewController : UIViewController {
             self.view.backgroundColor = color
         }
     }
-}
+    
+    private func retrieveCurrentUserDetails() {
+        managedObjectContext?.performBlock(
+            {
+                // Get the User from Core Data
+                do {
+                    let currentUser = try (self.managedObjectContext!.executeFetchRequest(NSFetchRequest(entityName: "User")) as! [User]).first
+                    if(self.emailSwitch.on)
+                    {
+                        self.message.appendContentsOf((currentUser?.email)!)
+                    }
+                    print("fetched \(currentUser?.firstName)")
+                    
+                } catch {
+                    // We should probably handle the case where this save fails but for now
+                    fatalError("Failed to fetch currentUser: \(error)")
+                }
+        })
+    }
+    
 
+}
 
 
 
