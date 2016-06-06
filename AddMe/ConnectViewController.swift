@@ -10,6 +10,7 @@ import Foundation
 import CoreData
 
 class ConnectViewController : UIViewController {
+    @IBOutlet var sendButton: UIButton!
     @IBOutlet var connectionsLabel: UILabel!
     @IBOutlet var textField: UITextField!
     @IBOutlet var emailSwitch: UISwitch!
@@ -27,9 +28,13 @@ class ConnectViewController : UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         addMeService.delegate = self
-
+        sendButton.hidden = true
+    }
+    // Deinitialize the delegate to prevent multiple instances of MCSessions
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(true)
+        addMeService.delegate = nil
     }
     @IBAction func sendButtonClicked(sender: AnyObject) {
         retrieveCurrentUserDetails()
@@ -101,6 +106,7 @@ extension ConnectViewController : AddMeServiceManagerDelegate {
     func connectedDevicesChanged(manager: AddMeServiceManager, connectedDevices: [String]) {
         NSOperationQueue.mainQueue().addOperationWithBlock {
             self.connectionsLabel.text = "Connections: \(connectedDevices)"
+            self.sendButton.hidden = false
         }
     }
     // Will happen if other device requests change

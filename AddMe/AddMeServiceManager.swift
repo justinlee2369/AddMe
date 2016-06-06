@@ -26,18 +26,13 @@ class AddMeServiceManager : NSObject {
 
     override init() {
         self.serviceAdvertiser = MCNearbyServiceAdvertiser(peer: myPeerID, discoveryInfo: nil, serviceType: AddMeServiceType)
-        
         self.serviceBrowser = MCNearbyServiceBrowser(peer: myPeerID, serviceType: AddMeServiceType)
         super.init()
         self.serviceAdvertiser.delegate = self
-        self.serviceAdvertiser.startAdvertisingPeer()
-        
-        // service browser stuff
- 
         self.serviceBrowser.delegate = self
-        self.serviceBrowser.startBrowsingForPeers()
-        
 
+        self.serviceAdvertiser.startAdvertisingPeer()
+        self.serviceBrowser.startBrowsingForPeers()
     }
     deinit {
         self.serviceAdvertiser.stopAdvertisingPeer()
@@ -105,9 +100,13 @@ extension AddMeServiceManager : MCNearbyServiceBrowserDelegate {
     }
     
     func browser(browser: MCNearbyServiceBrowser, foundPeer peerID: MCPeerID, withDiscoveryInfo info: [String : String]?) {
-        NSLog("%@", "foundPeer: \(peerID)")
-        NSLog("%@", "invitePeer: \(peerID)")
-        browser.invitePeer(peerID, toSession: self.session, withContext: nil, timeout: 10)
+
+        if(self.myPeerID.displayName != (peerID.displayName))
+        {
+            NSLog("%@", "foundPeer: \(peerID)")
+            NSLog("%@", "invitePeer: \(peerID)")
+            browser.invitePeer(peerID, toSession: self.session, withContext: nil, timeout: 10)
+        }
     }
     
     func browser(browser: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
@@ -120,7 +119,10 @@ extension AddMeServiceManager : MCSessionDelegate {
     
     func session(session: MCSession, peer peerID: MCPeerID, didChangeState state: MCSessionState) {
         NSLog("%@", "peer \(peerID) didChangeState: \(state.stringValue())")
-        self.delegate?.connectedDevicesChanged(self, connectedDevices: session.connectedPeers.map({$0.displayName}))
+        if(self.myPeerID.displayName != peerID.displayName)
+        {
+            self.delegate?.connectedDevicesChanged(self, connectedDevices: session.connectedPeers.map({$0.displayName}))
+        }
     }
     
     func session(session: MCSession, didReceiveData data: NSData, fromPeer peerID: MCPeerID) {
