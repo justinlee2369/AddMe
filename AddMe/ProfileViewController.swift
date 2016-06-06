@@ -108,7 +108,8 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
                     
                     self.nameLabel.text = currentUser!.firstName!  + " " + currentUser!.lastName!
                     self.profilePhoto.image = currentUser?.getProfilePic()
-                    print("set prof pic")
+                    self.facebookField.text = currentUser?.facebook
+                    print("set prof pic, name, fb")
                 } catch {
                     // We should probably handle the case where this save fails but for now
                     fatalError("Failed to fetch currentUser: \(error)")
