@@ -23,6 +23,7 @@ class AddMeServiceManager : NSObject {
     private let serviceAdvertiser : MCNearbyServiceAdvertiser
     private var serviceBrowser : MCNearbyServiceBrowser
     var delegate : AddMeServiceManagerDelegate?
+    
 
     override init() {
         self.serviceAdvertiser = MCNearbyServiceAdvertiser(peer: myPeerID, discoveryInfo: nil, serviceType: AddMeServiceType)

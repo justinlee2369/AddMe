@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3622EE5C1D061EAA007BB052 /* HistoryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3622EE5B1D061EA9007BB052 /* HistoryTableViewController.swift */; };
 		362A8BE81CDD6E150019AE72 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362A8BE71CDD6E150019AE72 /* AppDelegate.swift */; };
 		362A8BEA1CDD6E150019AE72 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362A8BE91CDD6E150019AE72 /* ViewController.swift */; };
 		362A8BED1CDD6E150019AE72 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 362A8BEB1CDD6E150019AE72 /* Main.storyboard */; };
@@ -29,6 +30,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3622EE5B1D061EA9007BB052 /* HistoryTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryTableViewController.swift; sourceTree = "<group>"; };
 		362A8BE41CDD6E150019AE72 /* AddMe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AddMe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		362A8BE71CDD6E150019AE72 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		362A8BE91CDD6E150019AE72 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -106,6 +108,7 @@
 				FD17F0DC1CFE3C4D002048FD /* Core Data */,
 				362A8BF01CDD6E160019AE72 /* LaunchScreen.storyboard */,
 				362A8BEB1CDD6E150019AE72 /* Main.storyboard */,
+				3622EE5B1D061EA9007BB052 /* HistoryTableViewController.swift */,
 			);
 			path = AddMe;
 			sourceTree = "<group>";
@@ -201,6 +204,7 @@
 				FDD2ED5A1CFE2F5300770A2F /* Model.xcdatamodeld in Sources */,
 				362A8BE81CDD6E150019AE72 /* AppDelegate.swift in Sources */,
 				36A08FBF1CF2CB74007516D2 /* AddMeServiceManager.swift in Sources */,
+				3622EE5C1D061EAA007BB052 /* HistoryTableViewController.swift in Sources */,
 				FD17F0DA1CFE3B93002048FD /* User+CoreDataProperties.swift in Sources */,
 				36EB599B1CF807A300AF9290 /* ConnectViewController.swift in Sources */,
 				FD17F0DB1CFE3B93002048FD /* User.swift in Sources */,
