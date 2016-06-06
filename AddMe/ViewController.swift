@@ -24,10 +24,23 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-//        self.view.backgroundColor = UIColor(patternImage: UIImage(named: "bg.jpg")!)
-
+//        self.view.backgroundColor = UIColor(patternImage: UIImage(named: "images/sf.PNG")!)
+       
+        
+        let imageView = UIImageView(frame: self.view.bounds)
+        imageView.image = UIImage(named: "images/ny.jpg")
+        self.view.addSubview(imageView)
+        self.view.sendSubviewToBack(imageView)
+        
         configureFacebook()
         homeButton.hidden = true
+        
+        userProfileImage.layer.borderWidth = 1
+        userProfileImage.layer.masksToBounds = false
+        userProfileImage.layer.borderColor = UIColor.whiteColor().CGColor
+        userProfileImage.layer.cornerRadius = userProfileImage.frame.height/2
+        userProfileImage.clipsToBounds = true
+
         /*if(loginSuccess && GlobalVariables.sharedManager.addMeProfPic != nil)
         {
             userProfileImage.image = GlobalVariables.sharedManager.addMeProfPic.image
@@ -46,6 +59,10 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
 //        self.view.addSubview(loginButton);
         
         
+    }
+    override func viewWillAppear(animated: Bool)
+    {
+        self.navigationController?.navigationBarHidden = true
     }
 //    
 //    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -75,11 +92,13 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
 
     func loginButton(loginButton: FBSDKLoginButton!, didCompleteWithResult result: FBSDKLoginManagerLoginResult!, error: NSError!)
     {
-        FBSDKGraphRequest.init(graphPath: "me", parameters: ["fields":"first_name, last_name, picture.type(large)"]).startWithCompletionHandler { (connection, result, error) -> Void in
+        FBSDKGraphRequest.init(graphPath: "me", parameters: ["fields":"first_name, last_name, link, picture.type(large)"]).startWithCompletionHandler { (connection, result, error) -> Void in
             
             let strFirstName: String = (result.objectForKey("first_name") as? String)!
             let strLastName: String = (result.objectForKey("last_name") as? String)!
             let strPictureURL: String = (result.objectForKey("picture")?.objectForKey("data")?.objectForKey("url") as? String)!
+            let strLink: String = (result.objectForKey("link") as? String)!
+            print(strLink)
             // set variables from fb data
             GlobalVariables.sharedManager.firstName = strFirstName
             GlobalVariables.sharedManager.lastName = strLastName
@@ -94,7 +113,7 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
             self.homeButton.hidden = false
             
             let pfPic = UIImage(data: NSData(contentsOfURL: NSURL(string: strPictureURL)!)!)
-            self.saveUserFacebookDetailsToDatabase(strFirstName, lastName: strLastName, profilePic: pfPic!)
+            self.saveUserFacebookDetailsToDatabase(strFirstName, lastName: strLastName, fbLink: strLink, profilePic: pfPic!)
         }
         // make home button appear
         self.performSegueWithIdentifier("ShowHomeSegue", sender: self)
@@ -114,12 +133,12 @@ class ViewController: UIViewController, FBSDKLoginButtonDelegate {
         labelName.text = "Welcome to Add Me!"
     }
     
-    private func saveUserFacebookDetailsToDatabase(firstName: String, lastName: String, profilePic: UIImage)
+    private func saveUserFacebookDetailsToDatabase(firstName: String, lastName: String, fbLink: String, profilePic: UIImage)
     {
         managedObjectContext?.performBlock(
         {
             // create a new User object in database and set the fields gathered from Facebook
-            _ = User.createUserWithFBDetails(firstName, lastName: lastName, profilePic: profilePic, inManagedObjectContext: self.managedObjectContext!)
+            _ = User.createUserWithFBDetails(firstName, lastName: lastName, fbLink: fbLink, profilePic: profilePic, inManagedObjectContext: self.managedObjectContext!)
             
             do {
                 // Hopefully this save works
