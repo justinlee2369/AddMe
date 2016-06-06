@@ -30,9 +30,13 @@ class User: NSManagedObject {
         return UIImage(data:self.profilePhoto!,scale:1.0)!
     }
     
-    func updateUserDetails(email: String)
+    func updateUserDetails(email: String, phone: String, facebook: String, linkedin: String, twitter: String)
     {
         self.email = email
+        self.phone = phone
+        self.facebook = facebook
+        self.linkedin = linkedin
+        self.twitter = twitter
     }
 
 }

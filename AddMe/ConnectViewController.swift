@@ -13,7 +13,11 @@ class ConnectViewController : UIViewController {
     @IBOutlet var connectionsLabel: UILabel!
     @IBOutlet var textField: UITextField!
     @IBOutlet var emailSwitch: UISwitch!
-    @IBOutlet var email: UILabel!
+    @IBOutlet var phoneSwitch: UISwitch!
+    @IBOutlet var facebookSwitch: UISwitch!
+    @IBOutlet var linkedinSwitch: UISwitch!
+    @IBOutlet var twitterSwitch: UISwitch!
+    @IBOutlet var receivingInfoBox: UILabel!
     var message : String = ""
     
     var managedObjectContext: NSManagedObjectContext? =
@@ -29,8 +33,6 @@ class ConnectViewController : UIViewController {
     }
     @IBAction func sendButtonClicked(sender: AnyObject) {
         retrieveCurrentUserDetails()
-        print("** \(message)")
-        addMeService.sendText(message)
     }
   
 //    @IBAction func submitButtonTapped(sender: AnyObject) {
@@ -62,7 +64,24 @@ class ConnectViewController : UIViewController {
                     {
                         self.message.appendContentsOf((currentUser?.email)!)
                     }
-                    print("fetched \(currentUser?.firstName)")
+                    if(self.phoneSwitch.on)
+                    {
+                        self.message.appendContentsOf((currentUser?.phone)!)
+                    }
+                    if(self.facebookSwitch.on)
+                    {
+                        self.message.appendContentsOf((currentUser?.facebook)!)
+                    }
+                    if(self.linkedinSwitch.on)
+                    {
+                        self.message.appendContentsOf((currentUser?.linkedin)!)
+                    }
+                    if(self.twitterSwitch.on)
+                    {
+                        self.message.appendContentsOf((currentUser?.twitter)!)
+                    }
+                    print("** \(self.message)")
+                    self.addMeService.sendText(self.message)
                     
                 } catch {
                     // We should probably handle the case where this save fails but for now
@@ -100,9 +119,10 @@ extension ConnectViewController : AddMeServiceManagerDelegate {
         NSOperationQueue.mainQueue().addOperationWithBlock {
             if (!textString.isEmpty)
             {
-                let alert = UIAlertController(title: "Alert", message: textString, preferredStyle: UIAlertControllerStyle.Alert)
-                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
-                self.presentViewController(alert, animated: true, completion: nil)
+//                let alert = UIAlertController(title: "Alert", message: textString, preferredStyle: UIAlertControllerStyle.Alert)
+//                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+//                self.presentViewController(alert, animated: true, completion: nil)
+                self.receivingInfoBox.text = textString
             
             }
         }

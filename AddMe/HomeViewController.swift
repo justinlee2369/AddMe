@@ -20,9 +20,14 @@ class HomeViewController: UIViewController {
     @IBAction func connectButtonTapped(sender: AnyObject) {
         performSegueWithIdentifier("ShowControllerSegue", sender: sender)
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         //profPic.image = GlobalVariables.sharedManager.addMeProfPic.image
+//        let imageView = UIImageView(frame: self.view.bounds)
+//        imageView.image = UIImage(named: "images/abstract.jpg")
+//        self.view.addSubview(imageView)
+//        self.view.sendSubviewToBack(imageView)
         
         profPic.layer.borderWidth = 1
         profPic.layer.masksToBounds = false
@@ -32,6 +37,11 @@ class HomeViewController: UIViewController {
         /*welcomeText.text = "Welcome " + GlobalVariables.sharedManager.firstName + " " + GlobalVariables.sharedManager.lastName + "!"*/
         
         retrieveCurrentUserDetails()
+    }
+    
+    override func viewWillAppear(animated: Bool)
+    {
+        self.navigationController?.navigationBarHidden = false
     }
     
     private func retrieveCurrentUserDetails() {

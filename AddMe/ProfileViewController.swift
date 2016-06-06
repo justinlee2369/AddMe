@@ -16,7 +16,12 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet var emailField: UITextField!
     @IBOutlet var phoneField: UITextField!
-    
+    @IBOutlet var facebookField: UITextField!
+    @IBOutlet var linkedinField: UITextField!
+    @IBOutlet var twitterField: UITextField!
+    @IBOutlet var startConnectingButton: UIButton!
+    let defaults: NSUserDefaults = NSUserDefaults.standardUserDefaults()
+
     var managedObjectContext: NSManagedObjectContext? =
         (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext
     
@@ -28,24 +33,63 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
         
         self.emailField.delegate = self
         self.phoneField.delegate = self
+        self.facebookField.delegate = self
+        self.linkedinField.delegate = self
+        self.twitterField.delegate = self
         
         profilePhoto.layer.borderWidth = 1
         profilePhoto.layer.masksToBounds = false
         profilePhoto.layer.borderColor = UIColor.whiteColor().CGColor
         profilePhoto.layer.cornerRadius = profilePhoto.frame.height/2
         profilePhoto.clipsToBounds = true
+        
+        if(defaults.boolForKey("SaveSuccess"))
+
+        {
+            startConnectingButton.hidden = false
+            self.emailField.text = defaults.objectForKey("email") as? String
+            self.phoneField.text = defaults.objectForKey("phoneNumber") as? String
+            self.facebookField.text = defaults.objectForKey("facebook") as? String
+            self.linkedinField.text = defaults.objectForKey("linkedin") as? String
+            self.twitterField.text = defaults.objectForKey("twitter") as? String
+
+        }
+        else
+        {
+            startConnectingButton.hidden = true
+        }
     }
     
+    @IBAction func startConnectingButtonClicked(sender: AnyObject) {
+//        performSegueWithIdentifier("ShowConnectSegue", sender: sender)
+    }
     @IBAction func saveButtonTapped(sender: AnyObject) {
-        if (emailField.text?.characters.count > 0)
+        if (emailField.text?.characters.count > 0 || phoneField.text?.characters.count > 0 ||
+            facebookField.text?.characters.count > 0 || linkedinField.text?.characters.count > 0 ||
+            twitterField.text?.characters.count > 0)
         {
-            saveUserDetails(emailField.text!)
-            print(emailField.text)
+            saveUserDetails(emailField.text!, phone: phoneField.text!, facebook: facebookField.text!, linkedin: linkedinField.text!, twitter: twitterField.text!)
+            self.defaults.setBool(true, forKey: "SaveSuccess")
+            self.startConnectingButton.hidden = false
+            let alert = UIAlertController(title: "Alert", message: "Your profile has been saved!", preferredStyle: UIAlertControllerStyle.Alert)
+            alert.addAction(UIAlertAction(title: "Great!", style: UIAlertActionStyle.Default, handler: nil))
+            self.presentViewController(alert, animated: true, completion: nil)
             
+            // Saving data in fields
+            defaults.setObject(self.emailField.text, forKey: "email")
+            defaults.setObject(self.phoneField.text, forKey: "phoneNumber")
+            defaults.setObject(self.facebookField.text, forKey: "facebook")
+            defaults.setObject(self.linkedinField.text, forKey: "linkedin")
+            defaults.setObject(self.twitterField.text, forKey: "twitter")
+
+            defaults.synchronize()
         }
         // Alert
         else
         {
+            let alert = UIAlertController(title: "Alert", message: "Please enter in necessary fields", preferredStyle: UIAlertControllerStyle.Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+            self.presentViewController(alert, animated: true, completion: nil)
         }
     }
     
@@ -72,12 +116,12 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
         })
     }
     
-    private func saveUserDetails(email: String) {
+    private func saveUserDetails(email: String, phone: String, facebook: String, linkedin: String, twitter: String) {
         managedObjectContext?.performBlock(
             {
                 do {
                    let currentUser = try (self.managedObjectContext!.executeFetchRequest(NSFetchRequest(entityName: "User")) as! [User]).first
-                    currentUser?.updateUserDetails(email)
+                    currentUser?.updateUserDetails(email, phone: phone, facebook: facebook, linkedin: linkedin, twitter: twitter)
                     
                 } catch {
                     fatalError("Failed to fetch currentUser: \(error)")
