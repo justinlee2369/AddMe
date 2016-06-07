@@ -10,4 +10,19 @@ import Foundation
 
 class HistoryTableViewController: UITableViewController {
     
+
+    var data: [String] = []
+    
+    // MARK: - UITableViewDataSource
+    
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return data.count
+    }
+    
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier("UserHistoryCell", forIndexPath: indexPath)
+        cell.textLabel?.text = data[indexPath.row]
+        return cell
+    }
+    
 }

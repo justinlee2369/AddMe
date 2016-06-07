@@ -37,7 +37,7 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
         self.linkedinField.delegate = self
         self.twitterField.delegate = self
         
-        profilePhoto.layer.borderWidth = 1
+        profilePhoto.layer.borderWidth = 3
         profilePhoto.layer.masksToBounds = false
         profilePhoto.layer.borderColor = UIColor.whiteColor().CGColor
         profilePhoto.layer.cornerRadius = profilePhoto.frame.height/2
@@ -67,6 +67,7 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
             facebookField.text?.characters.count > 0 || linkedinField.text?.characters.count > 0 ||
             twitterField.text?.characters.count > 0)
         {
+            print("******" + emailField.text! + phoneField.text! + facebookField.text! + linkedinField.text! + twitterField.text!)
             saveUserDetails(emailField.text!, phone: phoneField.text!, facebook: facebookField.text!, linkedin: linkedinField.text!, twitter: twitterField.text!)
             self.defaults.setBool(true, forKey: "SaveSuccess")
             self.startConnectingButton.hidden = false
