@@ -13,8 +13,9 @@ protocol AddMeServiceManagerDelegate {
     
     func connectedDevicesChanged(manager : AddMeServiceManager, connectedDevices: [String])
     func colorChanged(manager : AddMeServiceManager, colorString: String)
-    func textAlert(manager: AddMeServiceManager, textString: String)
-    
+    //func textAlert(manager: AddMeServiceManager, textString: String)
+    func textAlert(manager: AddMeServiceManager, textString: NSData)
+
 }
 
 class AddMeServiceManager : NSObject {
@@ -62,7 +63,7 @@ class AddMeServiceManager : NSObject {
         
     }
     
-    func sendText(textName : String) {
+    /*func sendText(textName : String) {
         NSLog("in send text")
         if session.connectedPeers.count > 0 {
             var error : NSError?
@@ -74,7 +75,24 @@ class AddMeServiceManager : NSObject {
             }
         }
 
+    }*/
+    
+    func sendText(textName : NSData) {
+        NSLog("in send text")
+        if session.connectedPeers.count > 0 {
+            var error : NSError?
+            do {
+                try self.session.sendData(textName, toPeers: session.connectedPeers, withMode: MCSessionSendDataMode.Reliable)
+                //try self.session.sendData(textName.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!, toPeers: session.connectedPeers, withMode: MCSessionSendDataMode.Reliable)
+            } catch let error1 as NSError {
+                error = error1
+                NSLog("%@", "\(error)")
+            }
+        }
+        
     }
+    
+    
 }
 
     // MARK: Delegate methods
@@ -128,8 +146,12 @@ extension AddMeServiceManager : MCSessionDelegate {
     
     func session(session: MCSession, didReceiveData data: NSData, fromPeer peerID: MCPeerID) {
         NSLog("%@", "didReceiveData: \(data.length) bytes")
-        let str = NSString(data: data, encoding: NSUTF8StringEncoding) as! String
-        self.delegate?.textAlert(self, textString: str)
+        
+        self.delegate?.textAlert(self, textString: data)
+
+        
+        //let str = NSString(data: data, encoding: NSUTF8StringEncoding) as! String
+        //self.delegate?.textAlert(self, textString: str)
 //        self.delegate?.colorChanged(self, colorString: str)
     }
     

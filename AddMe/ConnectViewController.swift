@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import Contacts
 
 class ConnectViewController : UIViewController {
     @IBOutlet var sendButton: UIButton!
@@ -19,7 +20,7 @@ class ConnectViewController : UIViewController {
     @IBOutlet var linkedinSwitch: UISwitch!
     @IBOutlet var twitterSwitch: UISwitch!
     @IBOutlet var receivingInfoBox: UILabel!
-    var message : String = ""
+    var message : NSData?
     
     var managedObjectContext: NSManagedObjectContext? =
         (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext
@@ -38,7 +39,7 @@ class ConnectViewController : UIViewController {
         addMeService.delegate = nil
     }
     @IBAction func sendButtonClicked(sender: AnyObject) {
-        self.message = ""
+        self.message = nil
         retrieveCurrentUserDetails()
     }
   
@@ -69,7 +70,8 @@ class ConnectViewController : UIViewController {
                     var jsonObject: [String:AnyObject]
                     let currentUser = try (self.managedObjectContext!.executeFetchRequest(NSFetchRequest(entityName: "User")) as! [User]).first
                     jsonObject = [
-                        "name": (currentUser?.firstName)!
+                        "firstName": ((currentUser?.firstName)!),
+                        "lastName": ((currentUser?.lastName)!)
                     ]
                     
                     if(self.emailSwitch.on)
@@ -79,7 +81,7 @@ class ConnectViewController : UIViewController {
                         let emailString = self.defaults.objectForKey("email") as? String
                         print(emailString)
                         jsonObject["email"] = (emailString!)
-                        self.message.appendContentsOf(emailString!)
+                        //self.message.appendContentsOf(emailString!)
                         
                     }
                     if(self.phoneSwitch.on)
@@ -88,7 +90,7 @@ class ConnectViewController : UIViewController {
                         print(phoneString)
                         jsonObject["phoneNumber"] = (phoneString!)
                         
-                        self.message.appendContentsOf((currentUser?.phone)!)
+                        //self.message.appendContentsOf((currentUser?.phone)!)
                     }
                     if(self.facebookSwitch.on)
                     {
@@ -96,7 +98,7 @@ class ConnectViewController : UIViewController {
                         print(facebookString)
                         jsonObject["facebook"] = (facebookString!)
                         
-                        self.message.appendContentsOf((currentUser?.facebook)!)
+                        //self.message.appendContentsOf((currentUser?.facebook)!)
                     }
                     if(self.linkedinSwitch.on)
                     {
@@ -104,7 +106,7 @@ class ConnectViewController : UIViewController {
                         print(linkedinString)
                         jsonObject["linkedin"] = (linkedinString!)
                         
-                        self.message.appendContentsOf((currentUser?.linkedin)!)
+                        //self.message.appendContentsOf((currentUser?.linkedin)!)
 
                     }
                     if(self.twitterSwitch.on)
@@ -113,14 +115,33 @@ class ConnectViewController : UIViewController {
                         print(twitterString)
                         jsonObject["twitter"] = (twitterString!)
                         
-                        self.message.appendContentsOf((currentUser?.twitter)!)
+                        //self.message.appendContentsOf((currentUser?.twitter)!)
                     }
                     let valid = NSJSONSerialization.isValidJSONObject(jsonObject) // true
                     print("Json valid: \(valid)")
-                    self.message = jsonObject.description
-                    print("** \(self.message)")
                     
-                    self.addMeService.sendText(self.message)
+                    
+                    do {
+                        let jsonData = try NSJSONSerialization.dataWithJSONObject(jsonObject, options: NSJSONWritingOptions.PrettyPrinted)
+                        // here "jsonData" is the dictionary encoded in JSON data
+                        
+                        self.message = jsonData
+                        let decoded = try NSJSONSerialization.JSONObjectWithData(jsonData, options: [])
+                        print(decoded)
+                        
+                        //print("** \(self.message)")
+
+                        
+                    } catch let error as NSError {
+                        print(error)
+                    }
+                    
+                    
+                    //self.message = jsonObject.description
+                    //print("** \(self.message)")
+
+                    
+                    self.addMeService.sendText(self.message!)
 
                     
                 } catch {
@@ -155,18 +176,154 @@ extension ConnectViewController : AddMeServiceManagerDelegate {
         }
     }
     
-    func textAlert(manager: AddMeServiceManager, textString: String) {
+    /*func textAlert(manager: AddMeServiceManager, textString: String) {
         NSOperationQueue.mainQueue().addOperationWithBlock {
             if (!textString.isEmpty)
             {
 //                let alert = UIAlertController(title: "Alert", message: textString, preferredStyle: UIAlertControllerStyle.Alert)
 //                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
 //                self.presentViewController(alert, animated: true, completion: nil)
+                
+                // Unwrap json from string
+                print(textString)
+                
+                //var data = textString.dataUsingEncoding(NSASCIIStringEncoding, allowLossyConversion: false)
+                do {
+                    
+                    
+                    //var json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.MutableContainers)
+                    
+                    // decoded
+                    let json = try NSJSONSerialization.JSONObjectWithData(textString, options: [])
+                    
+                    if let dict = json as? [String: AnyObject] {
+                        let name = dict["name"] as? [AnyObject]
+                        print(name)
+                        let email = dict["email"] as? [AnyObject]
+                        print(email)
+
+                        
+                        /*if let weather = dict["weather"] as? [AnyObject] {
+                            for dict2 in weather {
+                                let id = dict2["id"] as? Int
+                                let main = dict2["main"] as? String
+                                let description = dict2["description"] as? String
+                                print(id)
+                                print(main)
+                                print(description)
+                            }
+                        }*/
+                    }
+                    
+                }
+                catch {
+                    print(error)
+                }
+
+                
+                
+                
                 self.receivingInfoBox.text = textString
             
             }
         }
 
+    }*/
+    
+    
+    func textAlert(manager: AddMeServiceManager, textString: NSData) {
+        // Creating a mutable object to add to the contact
+        let contact = CNMutableContact()
+        var fname:String?
+        
+        
+        NSOperationQueue.mainQueue().addOperationWithBlock {
+            if (textString.length > 0)
+            {
+               // Unwrap json from string
+               do {
+                    
+                    // decoded
+                    let json = try NSJSONSerialization.JSONObjectWithData(textString, options: [])
+                    print(json)
+                
+                    if let dict = json as? [String: AnyObject] {
+                        fname = dict["firstName"] as? String
+                        print(fname)
+                        let lname = dict["lastName"] as? String
+                        print(lname)
+                        
+                        contact.givenName = fname!
+                        contact.familyName = lname!
+                        
+                        let email = dict["email"] as? String
+                        print(email)
+                        
+                        if(email != nil){
+                            let homeEmail = CNLabeledValue(label:CNLabelHome , value:email!)
+                            contact.emailAddresses = [homeEmail]
+                        }
+                        
+                        let phone = dict["phoneNumber"] as? String
+                        print(phone)
+                        
+                        if(phone != nil){
+                            contact.phoneNumbers = [CNLabeledValue(label:CNLabelPhoneNumberMain, value:CNPhoneNumber(stringValue: phone!))]
+                        }
+                        
+                        let facebook = dict["facebook"] as? String
+                        print(facebook)
+                        
+                        if(facebook != nil){
+                            let facebookProfile = CNLabeledValue(label: "Facebook", value:
+                            CNSocialProfile(urlString: facebook!, username: nil,
+                                userIdentifier: nil, service: CNSocialProfileServiceFacebook))
+                            contact.socialProfiles = [facebookProfile]
+                        }
+                        
+                        let twitter = dict["twitter"] as? String
+                        print(twitter)
+                        
+                        if(twitter != nil){
+                             let twitterProfile = CNLabeledValue(label: "Twitter", value: CNSocialProfile(urlString: twitter!, username: nil, userIdentifier: nil, service: CNSocialProfileServiceTwitter))
+                            contact.socialProfiles.append(twitterProfile)
+                        }
+                        
+                        let linkedin = dict["linkedin"] as? String
+                        print(linkedin)
+                        
+                        if(linkedin != nil){
+                            let linkedinProfile = CNLabeledValue(label: "LinkedIn", value: CNSocialProfile(urlString: linkedin!, username: nil, userIdentifier: nil, service: CNSocialProfileServiceLinkedIn ))
+                            contact.socialProfiles.append(linkedinProfile)
+                        }
+                        
+                        contact.organizationName = "AddMe"
+                        
+                    }
+                    
+                }
+                catch {
+                    print(error)
+                }
+                
+                //self.receivingInfoBox.text = textString
+                
+                // Saving the newly created contact
+                let store = CNContactStore()
+                let saveRequest = CNSaveRequest()
+                saveRequest.addContact(contact, toContainerWithIdentifier:nil)
+                try! store.executeSaveRequest(saveRequest)
+
+                print("Contact saved!!")
+                let alert = UIAlertController(title: "Notification", message: "\(fname!) has been added to your contacts!", preferredStyle: UIAlertControllerStyle.Alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+                self.presentViewController(alert, animated: true, completion: nil)
+                
+                
+            }
+        }
+        
     }
+
     
 }
