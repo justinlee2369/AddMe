@@ -319,8 +319,35 @@ extension ConnectViewController : AddMeServiceManagerDelegate {
                 self.saveContactHistory(fname!, lastName: lname!)
                 
                 print("Contact saved!!")
-                let alert = UIAlertController(title: "Notification", message: "\(fname!) has been added to your contacts!", preferredStyle: UIAlertControllerStyle.Alert)
-                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+                
+                let alert = UIAlertController(title: "Notification", message: "\(fname!) has been added to your contacts!\nMake a brief note about how you met?", preferredStyle: UIAlertControllerStyle.Alert)
+                //alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+                
+                let saveNoteAction = UIAlertAction(title: "Save Note", style: .Default) { (_) in
+                    let noteField = alert.textFields![0] as UITextField
+                    
+                    // save note to contact using noteField.text
+                    if(noteField.hasText()){
+                        contact.note = noteField.text!
+                        let saveRequest = CNSaveRequest()
+                        saveRequest.updateContact(contact)
+                        try! store.executeSaveRequest(saveRequest)
+                    }
+                }
+                
+                saveNoteAction.enabled = false
+                
+                alert.addTextFieldWithConfigurationHandler { (textField) in
+                    textField.placeholder = "Note i.e. met Justin at WWDC 2016, working on wearable tech"
+                    
+                    NSNotificationCenter.defaultCenter().addObserverForName(UITextFieldTextDidChangeNotification, object: textField, queue: NSOperationQueue.mainQueue()) {
+                          (notification) in saveNoteAction.enabled = textField.text != ""
+                    }
+                }
+                alert.addAction(saveNoteAction)
+                let laterAction = UIAlertAction(title: "Not Now", style: .Default){ (_) in }
+                alert.addAction(laterAction)
+                
                 self.presentViewController(alert, animated: true, completion: nil)
                 
                 
