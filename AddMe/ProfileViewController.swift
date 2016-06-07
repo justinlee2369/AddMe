@@ -44,7 +44,6 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
         profilePhoto.clipsToBounds = true
         
         if(defaults.boolForKey("SaveSuccess"))
-
         {
             startConnectingButton.hidden = false
             self.emailField.text = defaults.objectForKey("email") as? String

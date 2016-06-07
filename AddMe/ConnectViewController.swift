@@ -23,7 +23,8 @@ class ConnectViewController : UIViewController {
     
     var managedObjectContext: NSManagedObjectContext? =
         (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext
-
+    let defaults: NSUserDefaults = NSUserDefaults.standardUserDefaults()
+    
     let addMeService = AddMeServiceManager()
 
     override func viewDidLoad() {
@@ -37,6 +38,7 @@ class ConnectViewController : UIViewController {
         addMeService.delegate = nil
     }
     @IBAction func sendButtonClicked(sender: AnyObject) {
+        self.message = ""
         retrieveCurrentUserDetails()
     }
   
@@ -64,29 +66,62 @@ class ConnectViewController : UIViewController {
             {
                 // Get the User from Core Data
                 do {
+                    var jsonObject: [String:AnyObject]
                     let currentUser = try (self.managedObjectContext!.executeFetchRequest(NSFetchRequest(entityName: "User")) as! [User]).first
+                    jsonObject = [
+                        "name": (currentUser?.firstName)!
+                    ]
+                    
                     if(self.emailSwitch.on)
                     {
-                        self.message.appendContentsOf((currentUser?.email)!)
+                        //print((currentUser?.email)!)
+                        //self.message.appendContentsOf((currentUser?.email)!)
+                        let emailString = self.defaults.objectForKey("email") as? String
+                        print(emailString)
+                        jsonObject["email"] = (emailString!)
+                        self.message.appendContentsOf(emailString!)
+                        
                     }
                     if(self.phoneSwitch.on)
                     {
+                        let phoneString = self.defaults.objectForKey("phoneNumber") as? String
+                        print(phoneString)
+                        jsonObject["phoneNumber"] = (phoneString!)
+                        
                         self.message.appendContentsOf((currentUser?.phone)!)
                     }
                     if(self.facebookSwitch.on)
                     {
+                        let facebookString = self.defaults.objectForKey("facebook") as? String
+                        print(facebookString)
+                        jsonObject["facebook"] = (facebookString!)
+                        
                         self.message.appendContentsOf((currentUser?.facebook)!)
                     }
                     if(self.linkedinSwitch.on)
                     {
+                        let linkedinString = self.defaults.objectForKey("linkedin") as? String
+                        print(linkedinString)
+                        jsonObject["linkedin"] = (linkedinString!)
+                        
                         self.message.appendContentsOf((currentUser?.linkedin)!)
+
                     }
                     if(self.twitterSwitch.on)
                     {
+                        let twitterString = self.defaults.objectForKey("twitter") as? String
+                        print(twitterString)
+                        jsonObject["twitter"] = (twitterString!)
+                        
                         self.message.appendContentsOf((currentUser?.twitter)!)
                     }
+                    let valid = NSJSONSerialization.isValidJSONObject(jsonObject) // true
+                    print("Json valid: \(valid)")
+                    self.message = jsonObject.description
                     print("** \(self.message)")
+                    
                     self.addMeService.sendText(self.message)
+
                     
                 } catch {
                     // We should probably handle the case where this save fails but for now
@@ -95,7 +130,6 @@ class ConnectViewController : UIViewController {
         })
     }
     
-
 }
 
 
