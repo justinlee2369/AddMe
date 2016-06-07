@@ -123,6 +123,7 @@ class ProfileViewController: UIViewController, UITextFieldDelegate {
                 do {
                    let currentUser = try (self.managedObjectContext!.executeFetchRequest(NSFetchRequest(entityName: "User")) as! [User]).first
                     currentUser?.updateUserDetails(email, phone: phone, facebook: facebook, linkedin: linkedin, twitter: twitter)
+//                    try self.managedObjectContext!.save()
                     
                 } catch {
                     fatalError("Failed to fetch currentUser: \(error)")

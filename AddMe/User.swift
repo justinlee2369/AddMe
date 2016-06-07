@@ -39,5 +39,11 @@ class User: NSManagedObject {
         self.linkedin = linkedin
         self.twitter = twitter
     }
+    
+    func updateHistoryArray(firstName: String, lastName: String)
+    {
+        let fullName : String = firstName + " " + lastName
+        self.history.append(fullName)
+    }
 
 }

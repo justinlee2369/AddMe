@@ -235,6 +235,7 @@ extension ConnectViewController : AddMeServiceManagerDelegate {
         // Creating a mutable object to add to the contact
         let contact = CNMutableContact()
         var fname:String?
+        var lname:String?
         
         
         NSOperationQueue.mainQueue().addOperationWithBlock {
@@ -250,7 +251,7 @@ extension ConnectViewController : AddMeServiceManagerDelegate {
                     if let dict = json as? [String: AnyObject] {
                         fname = dict["firstName"] as? String
                         print(fname)
-                        let lname = dict["lastName"] as? String
+                        lname = dict["lastName"] as? String
                         print(lname)
                         
                         contact.givenName = fname!
@@ -314,6 +315,9 @@ extension ConnectViewController : AddMeServiceManagerDelegate {
                 saveRequest.addContact(contact, toContainerWithIdentifier:nil)
                 try! store.executeSaveRequest(saveRequest)
 
+                // Save contact to record string
+                self.saveContactHistory(fname!, lastName: lname!)
+                
                 print("Contact saved!!")
                 let alert = UIAlertController(title: "Notification", message: "\(fname!) has been added to your contacts!", preferredStyle: UIAlertControllerStyle.Alert)
                 alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
@@ -324,6 +328,22 @@ extension ConnectViewController : AddMeServiceManagerDelegate {
         }
         
     }
+    
+    private func saveContactHistory(firstName: String, lastName: String)
+    {
+        managedObjectContext?.performBlock({
+                // create a new User object in database and set the fields gathered from Facebook
+                do {
+                    let currentUser = try (self.managedObjectContext!.executeFetchRequest(NSFetchRequest(entityName: "User")) as! [User]).first
+                    currentUser?.updateHistoryArray(firstName, lastName: lastName)
+                    try self.managedObjectContext!.save()
+                    
+                } catch {
+                    fatalError("Failed to fetch currentUser: \(error)")
+                }
+        })
+    }
+
 
     
 }
