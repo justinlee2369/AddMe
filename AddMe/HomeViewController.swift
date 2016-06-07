@@ -12,6 +12,7 @@ class HomeViewController: UIViewController {
     var managedObjectContext: NSManagedObjectContext? =
         (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext
     
+    @IBOutlet var whiteBGView: UIView!
     @IBOutlet var welcomeText: UILabel!
     @IBOutlet var profPic: UIImageView!
     @IBAction func profileButtonTapped(sender: AnyObject) {
@@ -23,13 +24,15 @@ class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //profPic.image = GlobalVariables.sharedManager.addMeProfPic.image
-//        let imageView = UIImageView(frame: self.view.bounds)
-//        imageView.image = UIImage(named: "images/abstract.jpg")
-//        self.view.addSubview(imageView)
-//        self.view.sendSubviewToBack(imageView)
-        
-        profPic.layer.borderWidth = 1
+//        profPic.image = GlobalVariables.sharedManager.addMeProfPic.image
+        let imageView = UIImageView(frame: self.view.bounds)
+        imageView.image = UIImage(named: "images/bluebg.jpg")
+        self.view.addSubview(imageView)
+        self.view.sendSubviewToBack(imageView)
+        self.whiteBGView.layer.cornerRadius = 5.0
+        self.whiteBGView.clipsToBounds = true
+
+        profPic.layer.borderWidth = 4
         profPic.layer.masksToBounds = false
         profPic.layer.borderColor = UIColor.whiteColor().CGColor
         profPic.layer.cornerRadius = profPic.frame.height/2
@@ -51,7 +54,7 @@ class HomeViewController: UIViewController {
             do {
                 let currentUser = try (self.managedObjectContext!.executeFetchRequest(NSFetchRequest(entityName: "User")) as! [User]).first
                 print("fetched \(currentUser?.firstName)")
-                self.welcomeText.text = "Welcome " + currentUser!.firstName! + " " + currentUser!.lastName! + "!"
+                self.welcomeText.text = "" + currentUser!.firstName! + " " + currentUser!.lastName! + "!"
                 self.profPic.image = currentUser?.getProfilePic()
                 print("set prof pic")
             } catch {
